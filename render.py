@@ -31,7 +31,6 @@ def build_html(template_html: str, config: dict, project_root: Path) -> str:
     html = template_html
     html = html.replace("{{TEMPLATE_PATH}}", template_uri)
     html = html.replace("{{TITLE}}", config.get("title", ""))
-    html = html.replace("{{SUBTITLE}}", config.get("subtitle", ""))
     html = html.replace("{{TUTOR}}", config.get("tutor", ""))
     return html
 

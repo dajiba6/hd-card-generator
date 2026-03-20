@@ -8,7 +8,7 @@
 config.json  -->  HTML 模板（文字叠加到背景图上）  -->  Playwright 截图  -->  PNG
 ```
 
-1. 读取 JSON 配置文件，获取大标题、小标题、Tutor 名字
+1. 读取 JSON 配置文件，获取大标题、Tutor 名字
 2. 将配置注入 HTML 模板，文字通过 CSS 定位叠加在背景图上
 3. 使用 Playwright（无头 Chromium）按模板原始尺寸截图
 4. 输出像素级精准的 PNG 图片
@@ -51,7 +51,6 @@ python render.py --config examples/
 ```json
 {
   "title": "COMP1100 期中考试",
-  "subtitle": "易错点 & 考前速通卡",
   "tutor": "Tutor Ruby",
   "template": "templates/template.png",
   "output": "output/card.png"
@@ -60,8 +59,7 @@ python render.py --config examples/
 
 | 字段 | 说明 |
 |------|------|
-| `title` | 大标题文字（黄色区域上方，大字） |
-| `subtitle` | 小标题文字（大标题下方，中号字） |
+| `title` | 大标题文字（黄色区域，大字） |
 | `tutor` | Tutor 名字（底部渐变条区域） |
 | `template` | 背景模板图片路径（相对项目根目录） |
 | `output` | 输出 PNG 路径（相对项目根目录） |
