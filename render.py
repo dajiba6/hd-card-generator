@@ -54,7 +54,7 @@ def render_to_bytes(title: str, tutor: str, template_html: str | None = None) ->
 
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            browser = p.chromium.launch(args=["--no-sandbox", "--disable-gpu"])
             page = browser.new_page(viewport={"width": 1644, "height": 918})
             page.goto(tmp_path.resolve().as_uri())
             page.wait_for_load_state("networkidle")
