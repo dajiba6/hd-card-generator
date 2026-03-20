@@ -1,33 +1,67 @@
 # HD Card Generator
 
-基于模板的卡片图片生成工具。通过 HTML 叠加文字到背景模板图上，使用 Playwright 截图输出 PNG。
+基于模板的卡片图片生成服务。通过 HTML 叠加文字到背景模板图上，使用 Playwright 截图输出 PNG。支持 HTTP API 和 CLI 两种使用方式。
 
 ## 工作原理
 
 ```
-config.json  -->  HTML 模板（文字叠加到背景图上）  -->  Playwright 截图  -->  PNG
+title + tutor  -->  HTML 模板（文字叠加到背景图上）  -->  Playwright 截图  -->  PNG
 ```
 
-1. 读取 JSON 配置文件，获取大标题、Tutor 名字
-2. 将配置注入 HTML 模板，文字通过 CSS 定位叠加在背景图上
-3. 使用 Playwright（无头 Chromium）按模板原始尺寸截图
-4. 输出像素级精准的 PNG 图片
+## Docker 部署（推荐）
 
-## 安装
+### 构建镜像
+
+```bash
+docker build -t hd-card-generator .
+```
+
+### 启动服务
+
+```bash
+docker run -d -p 8000:8000 hd-card-generator
+```
+
+### 调用 API
+
+```bash
+curl -X POST http://localhost:8000/render \
+  -H "Content-Type: application/json" \
+  -d '{"title": "COMP1100 期中考试", "tutor": "Tutor Ruby"}' \
+  --output card.png
+```
+
+### API 接口
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| POST | `/render` | 生成卡片，返回 PNG 图片 |
+| GET | `/health` | 健康检查 |
+
+**POST /render 请求体：**
+
+```json
+{
+  "title": "COMP1100 期中考试",
+  "tutor": "Tutor Ruby"
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `title` | string | 大标题文字 |
+| `tutor` | string | Tutor 名字 |
+
+**响应：** `image/png` 二进制图片流
+
+## CLI 使用
+
+### 安装依赖
 
 ```bash
 pip install -r requirements.txt
 playwright install chromium
 ```
-
-或使用 uv：
-
-```bash
-uv pip install -r requirements.txt
-uv run playwright install chromium
-```
-
-## 使用方法
 
 ### 单张生成
 
@@ -46,7 +80,7 @@ python render.py --config examples/
 # 处理文件夹下所有 .json 配置文件
 ```
 
-## 配置格式
+### CLI 配置格式
 
 ```json
 {
@@ -56,13 +90,6 @@ python render.py --config examples/
   "output": "output/card.png"
 }
 ```
-
-| 字段 | 说明 |
-|------|------|
-| `title` | 大标题文字（黄色区域，大字） |
-| `tutor` | Tutor 名字（底部渐变条区域） |
-| `template` | 背景模板图片路径（相对项目根目录） |
-| `output` | 输出 PNG 路径（相对项目根目录） |
 
 ## 自定义模板
 
@@ -74,14 +101,16 @@ python render.py --config examples/
 
 ```
 hd-card-generator/
-├── config.json          # 默认配置
-├── render.py            # 渲染脚本
+├── app.py               # FastAPI 服务
+├── render.py            # 核心渲染逻辑 + CLI 入口
 ├── template.html        # HTML 模板（含占位符）
+├── Dockerfile           # Docker 构建文件
 ├── requirements.txt     # Python 依赖
 ├── templates/
 │   └── template.png     # 背景模板图片
-├── examples/            # 批量配置示例
+├── config.json          # CLI 默认配置
+├── examples/            # CLI 批量配置示例
 │   ├── card_comp1100.json
 │   └── card_acct3101.json
-└── output/              # 生成结果（已 gitignore）
+└── output/              # CLI 生成结果（已 gitignore）
 ```

@@ -1,0 +1,6 @@
+output/
+.git/
+.venv/
+__pycache__/
+*.pyc
+.tmp_render.html
